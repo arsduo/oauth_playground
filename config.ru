@@ -25,7 +25,7 @@ $stdout.reopen(log)
 $stderr.reopen(log)
 
 # load Facebook info for this environment
-FACEBOOK_INFO = YAML.load_file(File.join(File.dirname(__FILE__), "facebook.yml"))[env]
+FACEBOOK_INFO = YAML.load_file(File.join(File.dirname(__FILE__), "config", "facebook.yml"))[env]
 
 # activate the app
 disable :run

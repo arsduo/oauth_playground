@@ -1,5 +1,5 @@
 set :application, "oauth_playground"
-set :repository,  "git@github.com:arsduo/oauth_playground.git"
+set :repository,  "git://github.com/arsduo/oauth_playground.git"
 set :domain, "oauth.twoalex.com"
 set :deploy_to, "$HOME/rails_apps/#{application}/"
 
