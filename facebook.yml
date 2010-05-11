@@ -1,0 +1,13 @@
+development:
+  api_key: 171e3563d4fee42e0ba27450838bba32
+  secret_key: c81302ccef57cbdd2e68b2229e54cd2f
+  app_id: 119347844754245
+
+test:
+  api_key: 
+  secret_key: 
+
+production:
+  api_key: 25e1cec0df2b3bfa781da3ed78da3a1e
+  secret_key: e45e55a333eec232d4206d2703de1307
+  app_id: 119908831367602

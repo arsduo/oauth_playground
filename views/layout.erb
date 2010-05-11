@@ -1,0 +1,24 @@
+<html>
+<head>
+	<title>Facebook OAuth Playground</title>
+	<meta name="description" content="Making it easier to play with Facebook's new Graph API and OAuth authentication."></meta>
+	<style>
+		body {
+			font-family: verdana, arial, sans-serif;
+			font-size: 12px;
+		}
+	</style>
+</head>
+<body>
+
+<%= yield %>		
+		
+<div id="fb-root"></div>
+<script src="http://connect.facebook.net/en_US/all.js"></script>
+<script>
+	FB.init({ appId: <%= @app_data["app_id"] %>, cookie: true, status: true, xfbml: true });
+</script>
+
+</body>
+
+</html>

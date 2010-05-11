@@ -1,0 +1,66 @@
+<h1>Facebook OAuth Playground</h1>
+<h2>Powered by <a href="http://github.com/arsduo/koala" target="_blank">Koala</a></h2>
+<h4>For novelty use only.  Remember, the application's secret key is public.</h4>
+
+
+<h3>Facebook App Info</h3>
+<ul>
+	<% @app_data.each_pair do |key, value| %>
+		<li><b><%= key %>:</b> <%= value %></li>
+	<% end %>
+</ul>
+
+<h3>OAuth URLs</h3>
+<ul>
+	<li>Generate a code: <a href="<%= @oauth.url_for_oauth_code(:permissions => @permissions) %>"><%=  @oauth.url_for_oauth_code(:permissions => @permissions) %></a></li>
+	<li>OAuth code: <%= @code || "click on the link above" %></li>
+	<li>
+		Access token: <%= "#{@oauth_access_token} (fetched by Koala)" || "click on the link above" %>
+		<% if @oauth_access_token %><div class="sideNote">This was fetched by Koala as the page loaded!</div><% end %>
+	</li>
+	<li>Expiration: <%= @expiration || "click on the link above" %></li>
+	<li>Raw access response: <%= @raw_access_response || "click on the link above" %></li>
+	<li>URL for access code: 
+		<% if @code %>
+			<a href="<%= @oauth.url_for_access_token(@code) %>"><%= @oauth.url_for_access_token(@code) %></a>
+		<% else %>
+			click on the link above
+		<% end %>
+	</li>
+</ul>
+
+<h3>Permissions</h3>
+<ul>
+	<% ["publish_stream", "offline_access", "read_stream"].each do |p| %>
+		<li>
+			<a href="/?permissions=<%= p %>">Add <%= p %> to URLs and FB Login button</a>
+			(<a href="#" onclick="FB.api({method: 'auth.revokeExtendedPermission', perm: '<%= p %>'}, function(response) { alert(response) }); return false;">revoke</a>)
+		</li>
+	<% end %>
+	<li><a href="/">Reset URLs</a></li>
+</ul>
+
+<fb:login-button onlogin="location.reload()" perms="<%= @permissions %>"></fb:login-button>
+<% if @facebook_cookies %>
+	<a href="#" onclick="FB.logout(function() { location.reload() }); return false;">Logout</a>
+<% end %>
+
+<h3>Cookie info</h3>
+<ul>
+	<% if @facebook_cookies %>
+		<% @facebook_cookies.each_pair do |key, value| %>
+			<li><b><%= key %>:</b> <%= value %></li>
+		<% end %>
+	<% else %>
+		<li>You're not signed in via Javascript.  Login below.</li>
+	<% end %>
+	<li>Raw hash: <%= request.cookies.inspect %></li>
+</ul>
+
+<h3>Koala</h3>
+<ul>
+	<li>GraphAPI: <%= @access_token ? "@graph = Koala::Facebook::GraphAPI.new(\"#{@access_token}\")" : "sign in above or below" %></li>
+	<li>OAuth: @oauth = Koala::Facebook::OAuth.new(<%= @app_data["app_id"] %>, "<%= @app_data["secret_key"] %>", "<%= @app_data["callback_url"] %>")</li>
+</ul>
+
+<h5>Check out the Playground code at <a href="http://github.com/arsduo/oauth_playground">http://github.com/arsduo/oauth_playground</a></h5>
