@@ -149,7 +149,7 @@
 			<p>
 				<fb:login-button onlogin="location.reload()" perms="<%= (@permissions || []).join(",") %>"></fb:login-button>
 				<% if @permissions %>
-					and prompt for <%= @permissions.join(",") %>
+					and prompt for <%= @permissions.join(", ") %>
 				<% end %>
 				<% if @facebook_cookies %>
 					<div class="logout">
