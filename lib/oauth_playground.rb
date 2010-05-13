@@ -12,12 +12,6 @@ class OAuthPlayground < Sinatra::Application
 
   layout :layout
 
-  helpers do
-    def logger
-      LOGGER
-    end
-  end
-
   get "/" do
     @app_data = FACEBOOK_INFO.merge("callback_url" => "#{request.scheme}://#{request.host}/")
     @oauth = Facebook::OAuth.new(@app_data["app_id"], @app_data["secret_key"], @app_data["callback_url"])
@@ -34,7 +28,79 @@ class OAuthPlayground < Sinatra::Application
     @access_token = @oauth_access_token || @cookie_access_token
     @permissions = params[:permissions]
   
+    @available_permissions = [
+      {:name => "User Activity", :perms => ACTIVITY_PERMISSIONS},
+      {:name => "User Info", :perms => USER_PERMISSIONS},
+      {:name => "Friend Info", :perms => FRIEND_PERMISSIONS}
+    ]
+  
     erb :index
   end
   
+  helpers do
+    def logger
+      LOGGER
+    end 
+  end
+  
+  # list of permissions
+  
+  ACTIVITY_PERMISSIONS = [
+    :publish_stream, # Enables your application to post content, comments, and likes to a user's stream and to the streams of the user's friends, without prompting the user each time.
+    :create_event, # Enables your application to create and modify events on the user's behalf
+    :rsvp_event, # Enables your application to RSVP to events on the user's behalf
+    :sms, # Enables your application to send messages to the user and respond to messages from the user via text message
+    :offline_access # Enables your application to perform authorized requests on behalf of the user at any time. By default, most access tokens expire after a short time period to ensure applications only make requests on behalf of the user when the are actively using the application. This permission makes the access token returned by our OAuth endpoint long-lived.
+  ]
+
+  USER_PERMISSIONS = [
+    :email, # Provides access to the user's primary email address in the email property. Do not spam users. Your use of email must comply both with Facebook policies and with the CAN-SPAM Act.
+    :read_insights, # Provides read access to the Insights data for pages, applications, and domains the user owns.
+    :read_stream, # Provides access to all the posts in the user's News Feed and enables your application to perform searches against the user's News Feed
+    :user_about_me, # Provides access to the "About Me" section of the profile in the about property
+    :user_activities, # Provides access to the user's list of activities as the activities connection
+    :user_birthday, # Provides access to the full birthday with year as the birthday_date property
+    :user_education_history, # Provides access to education history as the education property
+    :user_events, # Provides access to the list of events the user is attending as the events connection
+    :user_groups, # Provides access to the list of groups the user is a member of as the groups connection
+    :user_hometown, # Provides access to the user's hometown in the hometown property
+    :user_interests, # Provides access to the user's list of interests as the interests connection
+    :user_likes, # Provides access to the list of all of the pages the user has liked as the likes connection
+    :user_location, # Provides access to the user's current location as the current_location property
+    :user_notes, # Provides access to the user's notes as the notes connection
+    :user_online_presence, # Provides access to the user's online/offline presence
+    :user_photo_video_tags, # Provides access to the photos the user has been tagged in as the photos connection
+    :user_photos, # Provides access to the photos the user has uploaded
+    :user_relationships, # Provides access to the user's family and personal relationships and relationship status
+    :user_religion_politics, # Provides access to the user's religious and political affiliations
+    :user_status, # Provides access to the user's most recent status message
+    :user_videos, # Provides access to the videos the user has uploaded
+    :user_website, # Provides access to the user's web site URL
+    :user_work_history # Provides access to work history as the work property
+  ]
+  
+  FRIEND_PERMISSIONS = [
+    :read_friendlists, # Provides read access to the user's friend lists
+    :read_requests, # Provides read access to the user's friend requests
+    :friends_about_me, # Provides access to the "About Me" section of the profile in the about property
+    :friends_activities, # Provides access to the user's list of activities as the activities connection
+    :friends_birthday, # Provides access to the full birthday with year as the birthday_date property
+    :friends_education_history, # Provides access to education history as the education property
+    :friends_events, # Provides access to the list of events the user is attending as the events connection
+    :friends_groups, # Provides access to the list of groups the user is a member of as the groups connection
+    :friends_hometown, # Provides access to the user's hometown in the hometown property
+    :friends_interests, # Provides access to the user's list of interests as the interests connection
+    :friends_likes, # Provides access to the list of all of the pages the user has liked as the likes connection
+    :friends_location, # Provides access to the user's current location as the current_location property
+    :friends_notes, # Provides access to the user's notes as the notes connection
+    :friends_online_presence, # Provides access to the user's online/offline presence
+    :friends_photo_video_tags, # Provides access to the photos the user has been tagged in as the photos connection
+    :friends_photos, # Provides access to the photos the user has uploaded
+    :friends_relationships, # Provides access to the user's family and personal relationships and relationship status
+    :friends_religion_politics, # Provides access to the user's religious and political affiliations
+    :friends_status, # Provides access to the user's most recent status message
+    :friends_videos, # Provides access to the videos the user has uploaded
+    :friends_website, # Provides access to the user's web site URL
+    :friends_work_history # Provides access to work history as the work property
+  ]
 end

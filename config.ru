@@ -29,5 +29,4 @@ FACEBOOK_INFO = YAML.load_file(File.join(File.dirname(__FILE__), "config", "face
 
 # activate the app
 disable :run
-set :environment, env
 run OAuthPlayground

@@ -1,66 +1,192 @@
-<h1>Facebook OAuth Playground</h1>
-<h2>Powered by <a href="http://github.com/arsduo/koala" target="_blank">Koala</a></h2>
-<h4>For novelty use only.  Remember, the application's secret key is public.</h4>
+<div id="header">
+	<h1>Facebook OAuth Playground</h1>
+	<h4>Powered by <a href="http://github.com/arsduo/koala" target="_blank">Koala</a></h2>
+	<h4>For novelty use only.  Remember, the application's secret key is public.</h4>
+</div>
 
+<style>
+	#header { 
+		text-align: center; 
+	} 
+	
+	h1, h2, h3, h4 { margin: 0; }
 
-<h3>Facebook App Info</h3>
-<ul>
-	<% @app_data.each_pair do |key, value| %>
-		<li><b><%= key %>:</b> <%= value %></li>
-	<% end %>
-</ul>
+	.section {
+		border: 1px solid black;
+		padding: 10px;
+		-moz-border-radius: 9px;
+		-webkit-border-radius: 9px;
+		margin-bottom: 10px;
+		width: 100%;
+	}
+	
+	#contents {
+		border: 2px solid #CCC;
+		border-width: 2px 0;
+		background-color: #EEE;
+		padding: 14px 3px 8px 8px;
+	}
+	
+	#configurationInfo {
+		float:left;
+		margin-right: 2.5%;
+		min-width:370px;
+		width: 25%;
+	}
+	
+	#configurationInfo .section {
+		background-color: #CCC;
+	}
+	
+	#permissions .header {
+		margin-bottom: 5px;
+	}
+	
+	#permissions .list {
+		height: 380px;
+		overflow: auto;
+	}
+	
+	#generatedInfo {
+		float: left;
+		width: 70%;
+	}
+	
+	#generatedInfo .section {
+		border-color: gray;
+		background: #DDD;
+		overflow: auto;
+	}
+	
+	.clearFloat {
+		height: 1px;
+		height: 0px;
+		clear: both;
+		overflow: hidden;
+	}
+	
+	ul, li { margin: 0; padding: 0; list-style: none; }
+	ul { margin: 12px 0; }
 
-<h3>OAuth URLs</h3>
-<ul>
-	<li>Generate a code: <a href="<%= @oauth.url_for_oauth_code(:permissions => @permissions) %>"><%=  @oauth.url_for_oauth_code(:permissions => @permissions) %></a></li>
-	<li>OAuth code: <%= @code || "click on the link above" %></li>
-	<li>
-		Access token: <%= "#{@oauth_access_token} (fetched by Koala)" || "click on the link above" %>
-		<% if @oauth_access_token %><div class="sideNote">This was fetched by Koala as the page loaded!</div><% end %>
-	</li>
-	<li>Expiration: <%= @expiration || "click on the link above" %></li>
-	<li>Raw access response: <%= @raw_access_response || "click on the link above" %></li>
-	<li>URL for access code: 
-		<% if @code %>
-			<a href="<%= @oauth.url_for_access_token(@code) %>"><%= @oauth.url_for_access_token(@code) %></a>
-		<% else %>
-			click on the link above
-		<% end %>
-	</li>
-</ul>
+	.code {
+		font-family: Courier, fixed;
+		font-size: 1.15em;
+		width: 100%;
+	}
+	
+	.explanation {
+		font-size: 0.9em;
+	}
+	
+	.datumName {
+		font-weight: bold;
+	}
+</style>
+	
+</style>
 
-<h3>Permissions</h3>
-<ul>
-	<% ["publish_stream", "offline_access", "read_stream"].each do |p| %>
-		<li>
-			<a href="/?permissions=<%= p %>">Add <%= p %> to URLs and FB Login button</a>
-			(<a href="#" onclick="FB.api({method: 'auth.revokeExtendedPermission', perm: '<%= p %>'}, function(response) { alert(response) }); return false;">revoke</a>)
-		</li>
-	<% end %>
-	<li><a href="/">Reset URLs</a></li>
-</ul>
+<div id="contents">
 
-<fb:login-button onlogin="location.reload()" perms="<%= @permissions %>"></fb:login-button>
-<% if @facebook_cookies %>
-	<a href="#" onclick="FB.logout(function() { location.reload() }); return false;">Logout</a>
-<% end %>
+	<div id="configurationInfo">
+		<div id="fbApp" class="section">
+			<h3>Facebook App Info</h3>
+			<ul>
+				<% @app_data.each_pair do |key, value| %>
+					<li><span class="datumName"><%= key %>:</span> <%= value %></li>
+				<% end %>
+			</ul>
+		</div>
+		
+		<div id="permissions" class="section">
+			<form method="get">
+				<div class="header">
+					<h3>Permissions</h3>
+					<input type="submit" value="Update permissions" />
+					<a href="/">Reset Selection</a>
+					<div class="explanation">Choose permissions for the OAuth URL and the fb:login button.</div>
+				</div>
+		
+				<div class="list">
+					<% @available_permissions.each do |permissions| %>
+						<h4><%= permissions[:name] %> Permissions</h4>
+						<ul>
+							<% permissions[:perms].each do |p| %>
+								<li>
+									<input type="checkbox" id="permission<%= p %>" name="permissions[]" value="<%= p %>" />
+									<label for="permission<%= p %>"><%= p %></a> (<a href="#" onclick="FB.api({method: 'auth.revokeExtendedPermission', perm: '<%= p %>'}, function(response) { alert(response) }); return false;">revoke</a>)
+								</li>
+							<% end %>
+						</ul>
+					<% end %>
+				</div>
+			</form>
+		</div>
+	</div>
 
-<h3>Cookie info</h3>
-<ul>
-	<% if @facebook_cookies %>
-		<% @facebook_cookies.each_pair do |key, value| %>
-			<li><b><%= key %>:</b> <%= value %></li>
-		<% end %>
-	<% else %>
-		<li>You're not signed in via Javascript.  Login below.</li>
-	<% end %>
-	<li>Raw hash: <%= request.cookies.inspect %></li>
-</ul>
+	<div id="generatedInfo">		
+		<div id="oauthURLs" class="section">
+			<h3>OAuth URLs</h3>
+			<ul>
+				<li><span class="datumName">Generate a code:</span> <a href="<%= @oauth.url_for_oauth_code(:permissions => @permissions) %>"><%=  @oauth.url_for_oauth_code(:permissions => @permissions) %></a></li>
+				<li><span class="datumName">OAuth code:</span> <%= @code || "click on the link above" %></li>
+				<li>
+					<span class="datumName">Access token:</span> <%= @oauth_access_token || "click on the link above" %>
+					<% if @oauth_access_token %><div class="explanation">This was fetched by Koala as the page loaded!</div><% end %>
+				</li>
+				<li><span class="datumName">Expiration:</span> <%= @expiration || "click on the link above" %></li>
+				<li><span class="datumName">Raw access response:</span> <%= @raw_access_response || "click on the link above" %></li>
+				<li><span class="datumName">URL for access code:</span>
+					<% if @code %>
+						<a href="<%= @oauth.url_for_access_token(@code) %>"><%= @oauth.url_for_access_token(@code) %></a>
+					<% else %>
+						click on the link above
+					<% end %>
+				</li>
+			</ul>
+		</div>
 
-<h3>Koala</h3>
-<ul>
-	<li>GraphAPI: <%= @access_token ? "@graph = Koala::Facebook::GraphAPI.new(\"#{@access_token}\")" : "sign in above or below" %></li>
-	<li>OAuth: @oauth = Koala::Facebook::OAuth.new(<%= @app_data["app_id"] %>, "<%= @app_data["secret_key"] %>", "<%= @app_data["callback_url"] %>")</li>
-</ul>
+		<div id="jsLogin" class="section">
+			<h3>Javascript Login (e.g. Facebook Connect)</h3>
+			<p>
+				<fb:login-button onlogin="location.reload()" perms="<%= (@permissions || []).join(",") %>"></fb:login-button> with permissions
+				<% if @facebook_cookies %>
+					(<a href="#" onclick="FB.logout(function() { location.reload() }); return false;">Logout</a>)
+				<% end %>
+			</p>
+		</div>
 
-<h5>Check out the playground's code at <a href="http://github.com/arsduo/oauth_playground">http://github.com/arsduo/oauth_playground</a>!</h5>
+		<div id="cookieInfo" class="section">
+			<h3>Cookie info</h3>
+			<ul>
+				<% if @facebook_cookies %>
+					<% @facebook_cookies.each_pair do |key, value| %>
+						<li><span class="datumName"><%= key %>:</span> <%= value %></li>
+					<% end %>
+				<% else %>
+					<li>You're not signed in via Javascript.  Login below.</li>
+				<% end %>
+				<li><span class="datumName">Raw hash</span>: 
+					<div class="code"><%= request.cookies.inspect %></div>
+				</li>
+			</ul>
+		</div>
+
+		<div id="koala" class="section">
+			<h3>Koala</h3>
+			<ul>
+				<li><span class="datumName">GraphAPI:</span>
+					<div class="code"><%= @access_token ? "@graph = Koala::Facebook::GraphAPI.new(\"#{@access_token}\")" : "sign in above or below" %></div>
+				</li>
+				<li><span class="datumName">OAuth:</span> 
+					<div class="code">@oauth = Koala::Facebook::OAuth.new(<%= @app_data["app_id"] %>, "<%= @app_data["secret_key"] %>", "<%= @app_data["callback_url"] %>")</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="clearFloat">&nbsp;</div>
+</div>
+
+<center>
+	<h5>Check out the playground's code at <a href="http://github.com/arsduo/oauth_playground">http://github.com/arsduo/oauth_playground</a>!</h5>
+</center>
