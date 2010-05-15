@@ -80,6 +80,10 @@
 	.datumName {
 		font-weight: bold;
 	}
+	
+	.permissionType {
+		font-style: italic;
+	}
 </style>
 	
 </style>
@@ -103,6 +107,12 @@
 					<input type="submit" value="Update permissions" />
 					<a href="/">Reset Selection</a>
 					<div class="explanation">Choose permissions for the OAuth URL and the fb:login button.</div>
+					<% if @fetched_permissions %>
+						<div class="permissionType">Showing currently-active permissions</div>
+						<div class="explanation">(These were fetched by Koala as the page loaded!)</div>
+					<% else %>
+						<div class="permissionType">Showing selected permissions</div>
+					<% end %>
 				</div>
 		
 				<div class="list">
@@ -111,7 +121,7 @@
 						<ul>
 							<% permissions[:perms].each do |p| %>
 								<li>
-									<input type="checkbox" id="permission<%= p %>" name="permissions[]" value="<%= p %>" />
+									<input type="checkbox" id="permission<%= p %>" name="permissions[]" value="<%= p %>" <%= @active_permissions.include?(p) ? "checked='checked'" : "" %> />
 									<label for="permission<%= p %>"><%= p %></a> (<a href="#" onclick="FB.api({method: 'auth.revokeExtendedPermission', perm: '<%= p %>'}, function(response) { alert(response) }); return false;">revoke</a>)
 								</li>
 							<% end %>

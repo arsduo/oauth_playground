@@ -1,20 +1,24 @@
+require 'rubygems'
 require 'sinatra'
 require 'rack/test'
+require 'typhoeus'
+require 'koala'
 
-Playground.set(
+require File.join(File.dirname(__FILE__), '..', 'lib', 'oauth_playground.rb')
+require File.join(File.dirname(__FILE__), '..', 'lib', 'load_facebook.rb')
+
+OAuthPlayground.set(
   :environment => :test,
   :run => false,
   :raise_errors => true,
   :logging => false
 )
 
-require File.join(File.dirname(__FILE__), '..', 'lib', 'playground.rb')
-
 module TestHelper
   
   def app
     # change to your app class if using the 'classy' style
-    Sinatra::Application.new
+    OAuthPlayground
   end
   
   def body
@@ -29,6 +33,4 @@ module TestHelper
 
 end
 
-require 'bacon'
-
-Bacon::Context.send(:include, TestHelper)
+include TestHelper

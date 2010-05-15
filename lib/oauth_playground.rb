@@ -15,19 +15,23 @@ class OAuthPlayground < Sinatra::Application
   get "/" do
     @app_data = FACEBOOK_INFO.merge("callback_url" => "#{request.scheme}://#{request.host}/")
     @oauth = Facebook::OAuth.new(@app_data["app_id"], @app_data["secret_key"], @app_data["callback_url"])
-    @facebook_cookies = @oauth.get_user_from_cookie(request.cookies)
-
-    if (@code = params[:code]) && @raw_access_response = @oauth.fetch_token_string(@code)
-      parsed = @oauth.parse_access_token(@raw_access_response)
-      @oauth_access_token = parsed["access_token"]
-      @expiration = parsed["expires"] || "Does not expire (offline)"
-    elsif @facebook_cookies
-      @cookie_access_token = @facebook_cookies["access_token"]
+    
+    # get authentication info
+    set_facebook_cookies 
+    set_oauth_data
+    set_access_token
+    
+    unless (@permissions = params[:permissions]) && @permissions.length > 0
+      @active_permissions = (get_active_permissions || {}).inject([]) do |active, perm| 
+        # collect our active permissions
+        active << perm[0].to_sym if perm[1] == 1
+        active
+      end
+      @fetched_permissions = true
+    else
+      @active_permissions = @permissions.collect {|p| p.to_sym}
     end
-
-    @access_token = @oauth_access_token || @cookie_access_token
-    @permissions = params[:permissions]
-  
+        
     @available_permissions = [
       {:name => "User Activity", :perms => ACTIVITY_PERMISSIONS},
       {:name => "User Info", :perms => USER_PERMISSIONS},
@@ -42,8 +46,71 @@ class OAuthPlayground < Sinatra::Application
       LOGGER
     end 
   end
+
+  # helpers
+
+  # set up our understanding of the user's session
+  
+  def set_access_token
+    # get the access token from wherever we can
+    @access_token ||= (set_oauth_data && @oauth_access_token) || (set_facebook_cookies && @cookie_access_token)
+  end
+  
+  def set_oauth_data
+    unless @oauth_access_token
+      if (@code = params[:code]) && @raw_access_response = @oauth.fetch_token_string(@code)
+        parsed = @oauth.parse_access_token(@raw_access_response)
+        @oauth_access_token = parsed["access_token"]
+        @expiration = parsed["expires"] || "Does not expire (offline)"
+      end
+    end
+    
+    @oauth_access_token
+  end
+  
+  def set_facebook_cookies
+    unless @facebook_cookies
+      if @facebook_cookies = @oauth.get_user_from_cookie(request.cookies)
+        @cookie_access_token = @facebook_cookies["access_token"]
+      end
+    end
+    
+    @facebook_cookies
+  end
+  
+  def set_uid
+    # get the OAuth data, including fetching the access token, if available and necessary
+    # e.g. if we have an OAuth token and no cookie data    
+    unless @uid 
+      if @facebook_cookies
+        @uid = @facebook_cookies["uid"]
+      elsif token = access_token
+        # we have to fetch the info
+        @graph = Facebook::GraphAPI.new(token)
+        result = @graph.get_object("me")
+        @uid = result["uid"]
+      end
+    end
+    @uid
+  end
+  
+  # fetch the active permissions about the user    
+  def get_active_permissions
+    set_access_token
+    if @access_token && !@permissions && set_uid
+      # if we don't have permissions set but have an access token
+      # grab the user's info
+      @rest = Facebook::RestAPI.new(@access_token)      
+      result = @rest.fql_query("select #{all_permissions.join(",")} from permissions where uid = #{@uid.to_s}")
+      result.first
+    end  
+  end
   
   # list of permissions
+
+  def all_permissions
+    ACTIVITY_PERMISSIONS + USER_PERMISSIONS + FRIEND_PERMISSIONS
+  end
   
   ACTIVITY_PERMISSIONS = [
     :publish_stream, # Enables your application to post content, comments, and likes to a user's stream and to the streams of the user's friends, without prompting the user each time.

@@ -5,10 +5,8 @@ require 'yaml'
 
 # app files
 require 'koala'
+require File.join(File.dirname(__FILE__), 'lib', 'load_facebook.rb')
 require File.join(File.dirname(__FILE__), 'lib', 'oauth_playground.rb')
-
-# get the environment
-env = ENV["RACK_ENV"]
 
 # LOGGING
 # set up the logfile
@@ -23,9 +21,6 @@ LOGGER = Logger.new(log_filename)
 # log output to stdout and stderr as well
 $stdout.reopen(log)
 $stderr.reopen(log)
-
-# load Facebook info for this environment
-FACEBOOK_INFO = YAML.load_file(File.join(File.dirname(__FILE__), "config", "facebook.yml"))[env]
 
 # activate the app
 disable :run
