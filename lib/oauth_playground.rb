@@ -88,7 +88,7 @@ class OAuthPlayground < Sinatra::Application
         # we have to fetch the info
         @graph = Facebook::GraphAPI.new(token)
         result = @graph.get_object("me")
-        @uid = result["uid"]
+        @uid = result["id"]
       end
     end
     @uid
