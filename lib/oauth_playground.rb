@@ -41,7 +41,7 @@ class OAuthPlayground < Sinatra::Application
     erb :index
   end
   
-  post "/subscriptions" do
+  get "/subscriptions" do
     # validate that this is a valid response
     # it will automatically render the result of the verification
     # e.g. either the challenge phrase or false
