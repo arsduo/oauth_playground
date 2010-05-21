@@ -41,6 +41,20 @@ class OAuthPlayground < Sinatra::Application
     erb :index
   end
   
+  post "/subscriptions" do
+    # validate that this is a valid response
+    # it will automatically render the result of the verification
+    # e.g. either the challenge phrase or false
+    subscription = Facebook::RealtimeUpdates.meet_challenge(params) do |verification_token|
+      token_parts = verification_token.split("|")
+      expected = Digest::MD5.hexdigest("#{token_parts.first}~koala")
+      logger.info "expected: #{expected}"
+      logger.info "got: #{token_parts.last}"
+      # determine if this is a valid token -- that is, if the send part is a properly encoding of the first
+      expected == token_parts.last
+    end
+  end
+  
   helpers do
     def logger
       LOGGER
@@ -58,8 +72,8 @@ class OAuthPlayground < Sinatra::Application
   
   def set_oauth_data
     unless @oauth_access_token
-      if (@code = params[:code]) && @raw_access_response = @oauth.fetch_token_string(@code)
-        parsed = @oauth.parse_access_token(@raw_access_response)
+      if (@code = params[:code]) && @raw_access_response = @oauth.send(:fetch_token_string, {:code => @code, :redirect_uri => @app_data["callback_url"]})
+        parsed = @oauth.send(:parse_access_token, @raw_access_response)
         @oauth_access_token = parsed["access_token"]
         @expiration = parsed["expires"] || "Does not expire (offline)"
       end
