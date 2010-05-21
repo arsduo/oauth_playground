@@ -84,7 +84,7 @@ class OAuthPlayground < Sinatra::Application
     unless @uid 
       if @facebook_cookies
         @uid = @facebook_cookies["uid"]
-      elsif token = access_token
+      elsif token = set_access_token
         # we have to fetch the info
         @graph = Facebook::GraphAPI.new(token)
         result = @graph.get_object("me")
