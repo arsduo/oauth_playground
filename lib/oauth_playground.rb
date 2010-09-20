@@ -157,7 +157,8 @@ class OAuthPlayground < Sinatra::Application
     :user_status, # Provides access to the user's most recent status message
     :user_videos, # Provides access to the videos the user has uploaded
     :user_website, # Provides access to the user's web site URL
-    :user_work_history # Provides access to work history as the work property
+    :user_work_history, # Provides access to work history as the work property
+    :user_checkins
   ]
   
   FRIEND_PERMISSIONS = [
@@ -182,6 +183,7 @@ class OAuthPlayground < Sinatra::Application
     :friends_status, # Provides access to the user's most recent status message
     :friends_videos, # Provides access to the videos the user has uploaded
     :friends_website, # Provides access to the user's web site URL
-    :friends_work_history # Provides access to work history as the work property
+    :friends_work_history, # Provides access to work history as the work property
+    :friends_checkins
   ]
 end
