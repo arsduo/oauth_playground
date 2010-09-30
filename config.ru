@@ -23,6 +23,11 @@ if ENV["RAILS_ENV"] == "production" || ENV["RACK_ENV"] == "production"
   ENV["GEM_HOME"] = "/home/alexkm/.gems"
 end
 
+# app files
+require 'koala'
+require File.join(File.dirname(__FILE__), 'lib', 'load_facebook.rb')
+require File.join(File.dirname(__FILE__), 'lib', 'oauth_playground.rb')
+
 # activate the app
 disable :run
 run OAuthPlayground
