@@ -84,7 +84,7 @@ class OAuthPlayground < Sinatra::Application
   
   def set_facebook_cookies
     unless @facebook_cookies
-      if @facebook_cookies = @oauth.get_user_from_cookie(request.cookies)
+      if @facebook_cookies = @oauth.get_user_info_from_cookie(request.cookies)
         @cookie_access_token = @facebook_cookies["access_token"]
       end
     end
