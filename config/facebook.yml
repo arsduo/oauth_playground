@@ -8,11 +8,12 @@ test:
   secret_key: 
 
 production:
-#  disabled app :(
-#  api_key: 25e1cec0df2b3bfa781da3ed78da3a1e
-#  secret_key: e45e55a333eec232d4206d2703de1307
-#  app_id: 119908831367602
-  api_key: d835b1866bd0db08b9e51b5c5d653b63
-  secret_key: 8fd11efa216019274dc94d14b3e9726e
-  app_id: 197248080311416
+  api_key: 25e1cec0df2b3bfa781da3ed78da3a1e
+  secret_key: e45e55a333eec232d4206d2703de1307
+  app_id: 119908831367602
+  
+# secondary app, made when the primary app was disabled
+#  api_key: d835b1866bd0db08b9e51b5c5d653b63
+#  secret_key: 8fd11efa216019274dc94d14b3e9726e
+#  app_id: 197248080311416
 
