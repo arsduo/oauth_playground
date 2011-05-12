@@ -131,7 +131,8 @@ class OAuthPlayground < Sinatra::Application
     :create_event, # Enables your application to create and modify events on the user's behalf
     :rsvp_event, # Enables your application to RSVP to events on the user's behalf
     :sms, # Enables your application to send messages to the user and respond to messages from the user via text message
-    :offline_access # Enables your application to perform authorized requests on behalf of the user at any time. By default, most access tokens expire after a short time period to ensure applications only make requests on behalf of the user when the are actively using the application. This permission makes the access token returned by our OAuth endpoint long-lived.
+    :offline_access, # Enables your application to perform authorized requests on behalf of the user at any time. By default, most access tokens expire after a short time period to ensure applications only make requests on behalf of the user when the are actively using the application. This permission makes the access token returned by our OAuth endpoint long-lived.
+    :manage_pages # Act for a page the given user owns
   ]
 
   USER_PERMISSIONS = [
