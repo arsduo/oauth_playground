@@ -1,4 +1,5 @@
 # gems
+require 'rubygems'
 require 'sinatra'
 require 'logger'
 require 'yaml'

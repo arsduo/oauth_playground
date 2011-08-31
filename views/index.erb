@@ -94,9 +94,13 @@
 		<div id="fbApp" class="section">
 			<h3>Facebook App Info</h3>
 			<ul>
-				<% @app_data.each_pair do |key, value| %>
-					<li><span class="datumName"><%= key %>:</span> <%= value %></li>
-				<% end %>
+			  <% if @uid %>
+  				<% @app_data.each_pair do |key, value| %>
+  					<li><span class="datumName"><%= key %>:</span> <%= value %></li>
+  				<% end %>
+  			<% else %>
+			    <li>Sign in to see app info</li>
+  			<% end %>
 			</ul>
 		</div>
 		
@@ -188,7 +192,10 @@
 		<div id="koala" class="section">
 			<h3>Koala</h3>
 			<ul>
-				<li><span class="datumName">GraphAPI:</span>
+				<li><span class="datumName">API (1.2.0beta1 and above):</span>
+					<div class="code"><%= @access_token ? "@graph = Koala::Facebook::API.new(\"#{@access_token}\")" : "sign in above" %></div>
+				</li>
+				<li><span class="datumName">GraphAPI (pre-1.2.0beta1):</span>
 					<div class="code"><%= @access_token ? "@graph = Koala::Facebook::GraphAPI.new(\"#{@access_token}\")" : "sign in above" %></div>
 				</li>
 				<li><span class="datumName">OAuth:</span> 
